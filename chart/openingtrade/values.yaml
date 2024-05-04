@@ -1,4 +1,5 @@
 alpaca:
+  url: https://stream.data.alpaca.markets/v2
   key:
   secret:
 

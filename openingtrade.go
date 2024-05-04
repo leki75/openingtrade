@@ -56,7 +56,12 @@ func tradeHandler(logger *zap.Logger) func(stream.Trade) {
 }
 
 func main() {
-	logger, _ := zap.NewProduction()
+	logConfig := zap.NewProductionConfig()
+	logConfig.Sampling = nil
+	logger, err := logConfig.Build()
+	if err != nil {
+		panic(err)
+	}
 
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
