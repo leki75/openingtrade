@@ -32,6 +32,8 @@ spec:
         {{- toYaml .Values.podSecurityContext | nindent 8 }}
       containers:
         - name: {{ .Chart.Name }}
+          args:
+            - /etc/config/symbols.yaml
           envFrom:
             - secretRef:
                 name: {{ include "openingtrade.fullname" . }}
@@ -41,12 +43,20 @@ spec:
           imagePullPolicy: {{ .Values.image.pullPolicy }}
           resources:
             {{- toYaml .Values.resources | nindent 12 }}
-          {{- with .Values.volumeMounts }}
           volumeMounts:
+            - name: symbols
+              mountPath: /etc/config
+          {{- with .Values.volumeMounts }}
             {{- toYaml . | nindent 12 }}
           {{- end }}
-      {{- with .Values.volumes }}
       volumes:
+        - name: symbols
+          configMap:
+            name: {{ include "openingtrade.fullname" . }}
+            items:
+              - key: symbols
+                path: symbols.yaml
+      {{- with .Values.volumes }}
         {{- toYaml . | nindent 8 }}
       {{- end }}
       {{- with .Values.nodeSelector }}
